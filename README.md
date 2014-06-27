@@ -25,7 +25,7 @@ The next variables are optional:
 You can also set a `deeeploy_newrelic_token` and a `deeeploy_newrelic_app_id` to trigger a deploy event on your newrelic dashboard.
 
 Example Playbook
--------------------------
+----------------
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
@@ -38,4 +38,4 @@ Including an example of how to use your role (for instance, with variables passe
 License
 -------
 
-MIT
+Deeeploy is licensed under the [MIT license](LICENSE).
