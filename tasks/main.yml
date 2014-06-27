@@ -15,9 +15,9 @@
   when: deeeploy_revision != "HEAD"
 - command: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} git reset --hard {{ deeeploy_revision }}
   when: deeeploy_revision != "HEAD"
-- shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} curl -sS https://getcomposer.org/installer | {{ php_bin }}
+- shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} curl -sS https://getcomposer.org/installer | {{ deeeploy_php_bin }}
 - name: Installation des vendors
-  command: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} {{ php_bin }} composer.phar install --prefer-dist --no-dev --optimize-autoloader --no-interaction --no-scripts --no-progress
+  command: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} {{ deeeploy_php_bin }} composer.phar install --prefer-dist --no-dev --optimize-autoloader --no-interaction --no-scripts --no-progress
 - name: Copie des fichiers de config
   template: src=../{{ item }}.dist dest={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
   with_items: deeeploy_config_files
