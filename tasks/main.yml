@@ -1,0 +1,44 @@
+---
+- shell: date +"%Y%m%d%H%M%S"
+  register: version
+- stat: path={{ deeeploy_project_path }}/current
+  register: current_release
+- command: chdir={{ deeeploy_project_path }}/current git rev-parse HEAD
+  register: old_commit
+  when: current_release.stat.exists
+- name: Commit déployé de la dernière release
+  debug: var=old_commit.stdout_lines
+  when: current_release.stat.exists
+- command: git clone --depth 1 {{ deeeploy_repo_url }} {{ deeeploy_project_path }}/releases/{{ version.stdout }}
+  when: deeeploy_revision == "HEAD"
+- command: git clone {{ deeeploy_repo_url }} {{ deeeploy_project_path }}/releases/{{ version.stdout }}
+  when: deeeploy_revision != "HEAD"
+- command: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} git reset --hard {{ deeeploy_revision }}
+  when: deeeploy_revision != "HEAD"
+- shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} curl -sS https://getcomposer.org/installer | {{ php_bin }}
+- name: Installation des vendors
+  command: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} {{ php_bin }} composer.phar install --prefer-dist --no-dev --optimize-autoloader --no-interaction --no-scripts --no-progress
+- name: Copie des fichiers de config
+  template: src=../{{ item }}.dist dest={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
+  with_items: deeeploy_config_files
+- file: state=absent
+        path={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
+  with_items: deeeploy_shared_files
+- name: Symlink des fichiers partagés
+  file: state=link
+        src={{ deeeploy_project_path }}/shared/{{ item }}
+        dest={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
+  with_items: deeeploy_shared_files
+- name: Création du symlink
+  file: state=link
+        src={{ deeeploy_project_path }}/releases/{{ version.stdout }}
+        dest={{ deeeploy_project_path }}/current
+        force=yes
+- command: chdir={{ deeeploy_project_path }}/current git rev-parse HEAD
+  register: new_commit
+- newrelic_deployment: token={{ deeeploy_newrelic_token }}
+                       application_id={{ deeeploy_newrelic_app_id }}
+                       user='ansible deployment'
+                       revision={{ new_commit.stdout }}
+                       changelog="{{ old_commit.stdout }}...{{ new_commit.stdout }}"
+  when: deeeploy_newrelic_token is defined
