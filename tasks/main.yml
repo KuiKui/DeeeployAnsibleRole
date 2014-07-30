@@ -3,18 +3,14 @@
   register: version
 - stat: path={{ deeeploy_project_path }}/current
   register: current_release
-- command: chdir={{ deeeploy_project_path }}/current git rev-parse HEAD
+- command: chdir={{ deeeploy_project_path }}/current cat VERSION
   register: old_commit
   when: current_release.stat.exists
 - name: Commit déployé de la dernière release
   debug: var=old_commit.stdout_lines
   when: current_release.stat.exists
-- command: git clone --depth 1 {{ deeeploy_repo_url }} {{ deeeploy_project_path }}/releases/{{ version.stdout }}
-  when: deeeploy_revision == "HEAD"
-- command: git clone {{ deeeploy_repo_url }} {{ deeeploy_project_path }}/releases/{{ version.stdout }}
-  when: deeeploy_revision != "HEAD"
-- command: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} git reset --hard {{ deeeploy_revision }}
-  when: deeeploy_revision != "HEAD"
+- command: git clone -b {{ deeeploy_branch }} --depth 1 {{ deeeploy_repo_url }} {{ deeeploy_project_path }}/releases/{{ version.stdout }}
+- shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} git rev-parse HEAD > VERSION
 - shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} curl -sS https://getcomposer.org/installer | {{ deeeploy_php_bin }}
 - name: Installation des vendors
   command: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} {{ deeeploy_php_bin }} composer.phar install --prefer-dist --no-dev --optimize-autoloader --no-interaction --no-scripts --no-progress
@@ -29,12 +25,16 @@
         src={{ deeeploy_project_path }}/shared/{{ item }}
         dest={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
   with_items: deeeploy_shared_files
+- name: Suppression des fichiers inutiles
+  file: state=absent
+        path={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
+  with_items: deeeploy_clean_files
 - name: Création du symlink
   file: state=link
         src={{ deeeploy_project_path }}/releases/{{ version.stdout }}
         dest={{ deeeploy_project_path }}/current
         force=yes
-- command: chdir={{ deeeploy_project_path }}/current git rev-parse HEAD
+- command: chdir={{ deeeploy_project_path }}/current cat VERSION
   register: new_commit
 - newrelic_deployment: token={{ deeeploy_newrelic_token }}
                        application_id={{ deeeploy_newrelic_app_id }}
