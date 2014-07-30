@@ -18,7 +18,6 @@ The next variables are mandatory:
 
 The next variables are optional:
 
-* `deeeploy_revision` (default HEAD)
 * `deeeploy_branch` (default master)
 * `deeeploy_config_files` (default [])
 * `deeeploy_shared_files` (default [])

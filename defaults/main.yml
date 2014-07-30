@@ -1,5 +1,4 @@
 ---
-deeeploy_revision: HEAD
 deeeploy_branch: master
 deeeploy_config_files: []
 deeeploy_shared_files: []
