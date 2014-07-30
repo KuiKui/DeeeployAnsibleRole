@@ -10,8 +10,10 @@
   when: current_release.stat.exists and not version_file.stat.exists
 - command: chdir={{ deeeploy_project_path }}/current cat VERSION
   register: old_commit
+  when: current_release.stat.exists
 - name: Commit déployé de la dernière release
   debug: var=old_commit.stdout_lines
+  when: current_release.stat.exists
 - command: git clone -b {{ deeeploy_branch }} --depth 1 {{ deeeploy_repo_url }} {{ deeeploy_project_path }}/releases/{{ version.stdout }}
 - shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} git rev-parse HEAD > VERSION
 - shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} curl -sS https://getcomposer.org/installer | {{ deeeploy_php_bin }}
