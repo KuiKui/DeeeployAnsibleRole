@@ -4,6 +4,7 @@
 - stat: path={{ deeeploy_project_path }}/current
   register: current_release
 - command: chdir={{ deeeploy_project_path }}/current cat VERSION
+  register: old_commit
   when: current_release.stat.exists
 - name: Commit déployé de la dernière release
   debug: var=old_commit.stdout_lines
@@ -32,7 +33,7 @@
 - name: Suppression des fichiers inutiles
   file: state=absent
         path={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
-  with_items: deeeploy_clean_files
+  with_items: deeeploy_clean_files ,
 - name: Création du symlink
   file: state=link
         src={{ deeeploy_project_path }}/releases/{{ version.stdout }}
