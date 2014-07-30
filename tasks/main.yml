@@ -33,7 +33,7 @@
 - name: Suppression des fichiers inutiles
   file: state=absent
         path={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
-  with_items: deeeploy_clean_files ,
+  with_items: deeeploy_clean_files
 - name: Création du symlink
   file: state=link
         src={{ deeeploy_project_path }}/releases/{{ version.stdout }}
