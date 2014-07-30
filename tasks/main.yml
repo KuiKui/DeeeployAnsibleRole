@@ -3,6 +3,9 @@
   register: version
 - stat: path={{ deeeploy_project_path }}/current
   register: current_release
+- file: state=touch
+        path={{ deeeploy_project_path }}/current/VERSION
+  when: current_release.stat.exists
 - command: chdir={{ deeeploy_project_path }}/current cat VERSION
   register: old_commit
   when: current_release.stat.exists
