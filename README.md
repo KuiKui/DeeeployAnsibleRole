@@ -19,8 +19,10 @@ The next variables are mandatory:
 The next variables are optional:
 
 * `deeeploy_revision` (default HEAD)
+* `deeeploy_branch` (default master)
 * `deeeploy_config_files` (default [])
 * `deeeploy_shared_files` (default [])
+* `deeeploy_clean_files` (default [".git"])
 
 You can also set a `deeeploy_newrelic_token` and a `deeeploy_newrelic_app_id` to trigger a deploy event on your newrelic dashboard.
 
