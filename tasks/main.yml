@@ -39,9 +39,12 @@
         force=yes
 - command: chdir={{ deeeploy_project_path }}/current cat VERSION
   register: new_commit
+- command: git --no-pager log --no-merges --oneline {{ old_commit.stdout }}...{{ new_commit.stdout }}
+  register: changelog
+  when: deeeploy_newrelic_token is defined
 - newrelic_deployment: token={{ deeeploy_newrelic_token }}
                        application_id={{ deeeploy_newrelic_app_id }}
                        user='ansible deployment'
                        revision={{ new_commit.stdout }}
-                       changelog="{{ old_commit.stdout }}...{{ new_commit.stdout }}"
+                       changelog="{{ changelog.stdout }}"
   when: deeeploy_newrelic_token is defined
