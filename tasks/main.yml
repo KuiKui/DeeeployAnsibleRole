@@ -28,6 +28,11 @@
         src={{ deeeploy_project_path }}/shared/{{ item }}
         dest={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
   with_items: deeeploy_shared_files
+- command: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} cat VERSION
+  register: new_commit
+- shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} git --no-pager log --no-merges --oneline {{ old_commit.stdout }}...{{ new_commit.stdout }}
+  register: changelog
+  when: deeeploy_newrelic_token is defined
 - name: Suppression des fichiers inutiles
   file: state=absent
         path={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
@@ -37,11 +42,6 @@
         src={{ deeeploy_project_path }}/releases/{{ version.stdout }}
         dest={{ deeeploy_project_path }}/current
         force=yes
-- command: chdir={{ deeeploy_project_path }}/current cat VERSION
-  register: new_commit
-- command: git --no-pager log --no-merges --oneline {{ old_commit.stdout }}...{{ new_commit.stdout }}
-  register: changelog
-  when: deeeploy_newrelic_token is defined
 - newrelic_deployment: token={{ deeeploy_newrelic_token }}
                        application_id={{ deeeploy_newrelic_app_id }}
                        user='ansible deployment'
