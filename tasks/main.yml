@@ -48,3 +48,5 @@
                        revision={{ new_commit.stdout }}
                        changelog="{{ changelog.stdout }}"
   when: deeeploy_newrelic_token is defined
+- command: echo "app.deployment 1 `date +%s`" | nc -u {{ deeeploy_graphite_host }} {{ deeeploy_graphite_port }}
+  when: deeeploy_graphite_host is defined
