@@ -15,8 +15,12 @@
 - command: git clone -b {{ deeeploy_branch }} --depth {{ deeeploy_clone_depth }} {{ deeeploy_repo_url }} {{ deeeploy_project_path }}/releases/{{ version.stdout }}
 - shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} git rev-parse HEAD > VERSION
 - shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} curl -sS https://getcomposer.org/installer | {{ deeeploy_php_bin }}
+  tags:
+    - composer
 - name: Installation des vendors
   command: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} {{ deeeploy_php_bin }} composer.phar install --prefer-dist --no-dev --optimize-autoloader --no-interaction --no-scripts --no-progress
+  tags:
+    - composer
 - name: Copie des fichiers de config
   template: src=../{{ item }}.dist dest={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
   with_items: deeeploy_config_files
