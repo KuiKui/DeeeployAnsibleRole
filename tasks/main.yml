@@ -52,5 +52,5 @@
                        revision={{ new_commit.stdout }}
                        changelog="{{ changelog.stdout }}"
   when: deeeploy_newrelic_token is defined
-- command: echo "{{ deeeploy_app_name }}.deployment 1 `date +%s`" | nc -u {{ deeeploy_graphite_host }} {{ deeeploy_graphite_port }}
+- command: echo "{{ deeeploy_app_name }}.deployment:1|c" | nc -u -w0 {{ deeeploy_graphite_host }} {{ deeeploy_graphite_port }}
   when: deeeploy_graphite_host is defined
