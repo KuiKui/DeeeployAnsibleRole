@@ -44,7 +44,7 @@
         path={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
   with_items: deeeploy_clean_files
 - name: Création du cache
-  shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} {{ deeeploy_php_bin }} app/console cache:clear -e prod
+  shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} {{ deeeploy_php_bin }} app/console cache:warmup -e prod
 - name: Création du symlink
   file: state=link
         src={{ deeeploy_project_path }}/releases/{{ version.stdout }}
