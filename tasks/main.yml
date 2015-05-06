@@ -43,6 +43,8 @@
   file: state=absent
         path={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
   with_items: deeeploy_clean_files
+- name: Installation des assets
+  shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} {{ deeeploy_php_bin }} app/console assets:install -e prod
 - name: Création du cache
   shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} {{ deeeploy_php_bin }} app/console cache:warmup -e prod
 - name: Création du symlink
