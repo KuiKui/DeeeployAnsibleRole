@@ -36,29 +36,12 @@
   with_items: deeeploy_shared_files
 - command: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} cat VERSION
   register: new_commit
-- shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} git --no-pager log --no-merges --oneline {{ old_commit.stdout }}...{{ new_commit.stdout }}
-  register: changelog
-  when: deeeploy_newrelic_token is defined
 - name: Suppression des fichiers inutiles
   file: state=absent
         path={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
   with_items: deeeploy_clean_files
-- name: Installation des assets
-  shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} {{ deeeploy_php_bin }} app/console assets:install -e prod
-- name: Vidage du cache
-  shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} {{ deeeploy_php_bin }} app/console cache:clear -e prod
-- name: Création du cache
-  shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} {{ deeeploy_php_bin }} app/console cache:warmup -e prod
 - name: Création du symlink
   file: state=link
         src={{ deeeploy_project_path }}/releases/{{ version.stdout }}
         dest={{ deeeploy_project_path }}/current
         force=yes
-- newrelic_deployment: token={{ deeeploy_newrelic_token }}
-                       application_id={{ deeeploy_newrelic_app_id }}
-                       user='ansible deployment'
-                       revision={{ new_commit.stdout }}
-                       changelog="{{ changelog.stdout }}"
-  when: deeeploy_newrelic_token is defined
-- command: echo "{{ deeeploy_app_name }}.deployment:1|c" | nc -u -w0 {{ deeeploy_graphite_host }} {{ deeeploy_graphite_port }}
-  when: deeeploy_graphite_host is defined
