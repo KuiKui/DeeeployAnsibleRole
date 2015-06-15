@@ -13,8 +13,7 @@
   debug: var=old_commit.stdout_lines
   when: current_release.stat.exists
 - command: git clone -b {{ deeeploy_branch }} --depth {{ deeeploy_clone_depth }} {{ deeeploy_repo_url }} {{ deeeploy_project_path }}/releases/{{ version.stdout }}
-- shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} git rev-parse HEAD > VERSION
-
+- shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} git rev-parse HEAD | cut -c1-8 > VERSION
 - name: Telechargement de composer
   shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} curl -sS https://getcomposer.org/installer | {{ deeeploy_php_bin }}
   tags:
@@ -36,6 +35,9 @@
   with_items: deeeploy_shared_files
 - command: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} cat VERSION
   register: new_commit
+- shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} git --no-pager log --no-merges --oneline {{ old_commit.stdout }}...{{ new_commit.stdout }}
+  register: changelog
+  when: deeeploy_newrelic_token is defined
 - name: Suppression des fichiers inutiles
   file: state=absent
         path={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
@@ -45,3 +47,9 @@
         src={{ deeeploy_project_path }}/releases/{{ version.stdout }}
         dest={{ deeeploy_project_path }}/current
         force=yes
+- newrelic_deployment: token={{ deeeploy_newrelic_token }}
+                       application_id={{ deeeploy_newrelic_app_id }}
+                       user='Ansible'
+                       revision="{{ deeeploy_branch }} : {{ new_commit.stdout }}"
+                       changelog="{{ changelog.stdout }}"
+  when: deeeploy_newrelic_token is defined
