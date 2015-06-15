@@ -50,6 +50,6 @@
 - newrelic_deployment: token={{ deeeploy_newrelic_token }}
                        application_id={{ deeeploy_newrelic_app_id }}
                        user='Ansible'
-                       revision="{{ deeeploy_branch }} : {{ new_commit.stdout }}"
+                       revision="{{ deeeploy_branch }} - {{ new_commit.stdout }}"
                        changelog="{{ changelog.stdout }}"
   when: deeeploy_newrelic_token is defined
