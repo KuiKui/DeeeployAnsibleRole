@@ -4,16 +4,16 @@
 - stat: path={{ deeeploy_project_path }}/current
   register: current_release
 - file: state=touch
-        path={{ deeeploy_project_path }}/current/VERSION
+        path={{ deeeploy_project_path }}/current/{{ deeeploy_version_filename }}
   when: current_release.stat.exists
-- command: chdir={{ deeeploy_project_path }}/current cat VERSION
+- command: chdir={{ deeeploy_project_path }}/current cat {{ deeeploy_version_filename }}
   register: old_commit
   when: current_release.stat.exists
 - name: Commit déployé de la dernière release
   debug: var=old_commit.stdout_lines
   when: current_release.stat.exists
 - command: git clone -b {{ deeeploy_branch }} --depth {{ deeeploy_clone_depth }} {{ deeeploy_repo_url }} {{ deeeploy_project_path }}/releases/{{ version.stdout }}
-- shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} git rev-parse HEAD | cut -c1-8 > VERSION
+- shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} git rev-parse HEAD | cut -c1-8 > {{ deeeploy_version_filename }}
 - name: Telechargement de composer
   shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} curl -sS https://getcomposer.org/installer | {{ deeeploy_php_bin }}
   tags:
@@ -33,7 +33,7 @@
         src={{ deeeploy_project_path }}/shared/{{ item }}
         dest={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
   with_items: deeeploy_shared_files
-- command: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} cat VERSION
+- command: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} cat {{ deeeploy_version_filename }}
   register: new_commit
 - shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} git --no-pager log --no-merges --oneline {{ old_commit.stdout }}...{{ new_commit.stdout }}
   register: changelog

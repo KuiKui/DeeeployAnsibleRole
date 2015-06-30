@@ -22,6 +22,7 @@ The next variables are optional:
 * `deeeploy_config_files` (default [])
 * `deeeploy_shared_files` (default [])
 * `deeeploy_clean_files` (default [".git"])
+* `deeeploy_version_filename` (default "VERSION")
 
 You can also set a `deeeploy_newrelic_token` and a `deeeploy_newrelic_app_id` to trigger a deploy event on your newrelic dashboard.
 
