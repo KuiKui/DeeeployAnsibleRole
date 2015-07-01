@@ -12,7 +12,7 @@
 - name: Commit déployé de la dernière release
   debug: var=old_commit.stdout_lines
   when: current_release.stat.exists
-- command: git clone -b {{ deeeploy_branch }} --depth {{ deeeploy_clone_depth }} {{ deeeploy_repo_url }} {{ deeeploy_project_path }}/releases/{{ version.stdout }}
+- command: git clone -b {{ deeeploy_branch }} {{ deeeploy_repo_url }} {{ deeeploy_project_path }}/releases/{{ version.stdout }}
 - shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} git rev-parse HEAD | cut -c1-8 > {{ deeeploy_version_filename }}
 - name: Telechargement de composer
   shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} curl -sS https://getcomposer.org/installer | {{ deeeploy_php_bin }}

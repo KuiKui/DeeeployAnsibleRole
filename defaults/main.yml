@@ -4,6 +4,5 @@ deeeploy_config_files: []
 deeeploy_shared_files: []
 deeeploy_clean_files: [".git"]
 deeeploy_php_bin: /usr/bin/php
-deeeploy_clone_depth: 50
 deeeploy_version_filename: VERSION
 deeeploy_slack_channel: "#general"
