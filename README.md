@@ -24,7 +24,10 @@ The next variables are optional:
 * `deeeploy_clean_files` (default [".git"])
 * `deeeploy_version_filename` (default "VERSION")
 
-You can also set a `deeeploy_newrelic_token` and a `deeeploy_newrelic_app_id` to trigger a deploy event on your newrelic dashboard.
+You can also :
+
+* set a `deeeploy_newrelic_token` and a `deeeploy_newrelic_app_id` to trigger a deploy event on [New Relic](http://newrelic.com/).
+* set a `deeeploy_slack_token` and a `deeeploy_slack_channel` to trigger a deploy notification on [Slack](https://slack.com/).
 
 Example Playbook
 ----------------

@@ -53,3 +53,10 @@
                        revision="{{ deeeploy_branch }} - {{ new_commit.stdout }}"
                        changelog="{{ changelog.stdout }}"
   when: deeeploy_newrelic_token is defined
+- name: Notification Slack
+  slack:
+    token: "{{ deeeploy_slack_token }}"
+    channel: "{{ deeeploy_slack_channel }}"
+    username: "Ansible"
+    msg: "Deploy to {{ inventory_hostname }}\nbranch : {{ deeeploy_branch }}\nhash : {{ new_commit.stdout }}\nchangelog :\n{{ changelog.stdout }}"
+  when: deeeploy_slack_token is defined
