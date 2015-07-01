@@ -85,6 +85,6 @@ To shared files/folders beetween releases, you need a dedicated folder on the re
 * it has to be at the root of `deeeploy_project_path`,
 * it has to have the exact same structure of files/folders you want to shared (`foo/bar` => `shared/foo/bar`).
 
-# License
+## License
 
 Licensed under the [MIT license](LICENSE).
