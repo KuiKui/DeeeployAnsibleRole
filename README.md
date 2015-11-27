@@ -1,46 +1,90 @@
-Deeeploy
-========
+# Deeeploy
 
-Deployment role capistrano like for PHP with composer projects. The role deploy a git project to a project path on a server under `releases`. And make a symink of the latest release to a `current` path. It also support shared files/folders and configuration files with jinja2 variables (named .dist).
+Ansible deployment role for PHP projects :
 
-Requirements
-------------
+* clone a git repo on a server in `releases\{timestamp}` directory,
+* use Composer to load dependencies,
+* update config files using Jinja2 variables (`.dist`),
+* create symlinks to share files/folders beetween releases,
+* delete irrelevant files,
+* make a `current` symlink to the latest release,
+* notify New Relic and Slack.
 
-You need a `shared` folder on the server you want to deploy. With the exact structure of shared files/folers you want (ie: foo/bar => shred/foo/bar).
+## Structure
 
-Role Variables
---------------
+The structure on the remote server looks like :
 
-The next variables are mandatory:
+```shell
+$ tree -L 3 /home/your-name
+/home/your-name
+└── your-app
+    ├── current -> /home/your-name/your-app/releases/20150701144412
+    ├── releases
+    │   ├── 20150623111930
+    │   ├── 20150625091111
+    │   ├── 20150630141139
+    │   ├── 20150630141346
+    │   ├── 20150630144820
+    │   ├── 20150701135925
+    │   └── 20150701144412
+    └── shared
+        ├── app
+        └── web
+```
 
-* `deeeploy_repo_url`
-* `deeeploy_project_path`
+## Variables
 
-The next variables are optional:
+The next variables are mandatory :
 
-* `deeeploy_branch` (default master)
-* `deeeploy_config_files` (default [])
-* `deeeploy_shared_files` (default [])
-* `deeeploy_clean_files` (default [".git"])
-* `deeeploy_version_filename` (default "VERSION")
+* `deeeploy_repo_url` : your git repo to deploy,
+* `deeeploy_project_path` : path on your server.
 
-You can also :
+The next variables are optional :
+
+* `deeeploy_branch` : branch to deploy (default `master`),
+* `deeeploy_config_files` : config files to replace with parameters value (default `[]`),
+* `deeeploy_shared_files` : files to shared between releases (default `[]`),
+* `deeeploy_clean_files` : irrelevant files to delete after deployment (default `[".git"]`)
+* `deeeploy_version_filename` : file containing deployed hash (default `VERSION`)
+
+To use notifications :
 
 * set a `deeeploy_newrelic_token` and a `deeeploy_newrelic_app_id` to trigger a deploy event on [New Relic](http://newrelic.com/).
 * set a `deeeploy_slack_token` and a `deeeploy_slack_channel` to trigger a deploy notification on [Slack](https://slack.com/).
 
-Example Playbook
-----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+## Example Playbook
 
 ```
-- hosts: webservers
+---
+- hosts: all
   roles:
-     - { role: Xotelia.Deeeploy, deeeploy_repo_url: git@github.com:foo/bar.git, deeeploy_project_path: /foo/bar }
+    -
+        role: deeeploy
+        deeeploy_repo_url: "git@github.com:You/YourProject.git"
+        deeeploy_project_path: /home/your-name/your-app
+        deeeploy_config_files:
+          - 'app/config/parameters.yml'
+        deeeploy_shared_files:
+          - "app/cache"
+          - "app/logs"
+        deeeploy_clean_files:
+          - '.git'
+          - 'Vagrantfile.dist'
+        deeeploy_version_filename: "web/VERSION"
+        deeeploy_newrelic_token: "As606c9f06706f6da0fz2448559f969e7b355f990x8d78d"
+        deeeploy_newrelic_app_id: "7635473"
+        deeeploy_slack_token: "R0796HXRX/B0745RDUS/DzJaLzBtzH8ctXklYJxoxItM"
+        deeeploy_slack_channel: "#deploy"
 ```
 
-License
--------
+## Shared files
 
-Deeeploy is licensed under the [MIT license](LICENSE).
+To shared files/folders beetween releases, you need a dedicated folder on the remote server :
+
+* it has to be named `shared`,
+* it has to be at the root of `deeeploy_project_path`,
+* it has to have the exact same structure of files/folders you want to shared (`foo/bar` => `shared/foo/bar`).
+
+## License
+
+Licensed under the [MIT license](LICENSE).
