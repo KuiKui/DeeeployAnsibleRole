@@ -33,6 +33,9 @@
         src={{ deeeploy_project_path }}/shared/{{ item }}
         dest={{ deeeploy_project_path }}/releases/{{ version.stdout }}/{{ item }}
   with_items: deeeploy_shared_files
+- name: Execution du script shell custom
+  shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} ./{{ deeeploy_custom_shell_script }}
+  when: deeeploy_custom_shell_script is defined
 - command: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} cat {{ deeeploy_version_filename }}
   register: new_commit
 - shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} git --no-pager log --no-merges --oneline {{ old_commit.stdout }}...{{ new_commit.stdout }}

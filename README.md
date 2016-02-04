@@ -51,6 +51,7 @@ To use notifications :
 
 * set a `deeeploy_newrelic_token` and a `deeeploy_newrelic_app_id` to trigger a deploy event on [New Relic](http://newrelic.com/).
 * set a `deeeploy_slack_token` and a `deeeploy_slack_channel` to trigger a deploy notification on [Slack](https://slack.com/).
+* set a `deeeploy_custom_shell_script` to execute a custom shell script.
 
 ## Example Playbook
 
