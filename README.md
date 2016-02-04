@@ -46,12 +46,13 @@ The next variables are optional :
 * `deeeploy_shared_files` : files to shared between releases (default `[]`),
 * `deeeploy_clean_files` : irrelevant files to delete after deployment (default `[".git"]`)
 * `deeeploy_version_filename` : file containing deployed hash (default `VERSION`)
+* `deeeploy_custom_shell_script` : custom shell script to execute
+
 
 To use notifications :
 
 * set a `deeeploy_newrelic_token` and a `deeeploy_newrelic_app_id` to trigger a deploy event on [New Relic](http://newrelic.com/).
 * set a `deeeploy_slack_token` and a `deeeploy_slack_channel` to trigger a deploy notification on [Slack](https://slack.com/).
-* set a `deeeploy_custom_shell_script` to execute a custom shell script.
 
 ## Example Playbook
 
@@ -72,6 +73,7 @@ To use notifications :
           - '.git'
           - 'Vagrantfile.dist'
         deeeploy_version_filename: "web/VERSION"
+        deeeploy_custom_shell_script: "scripts/deploy-custom.sh"
         deeeploy_newrelic_token: "As606c9f06706f6da0fz2448559f969e7b355f990x8d78d"
         deeeploy_newrelic_app_id: "7635473"
         deeeploy_slack_token: "R0796HXRX/B0745RDUS/DzJaLzBtzH8ctXklYJxoxItM"
