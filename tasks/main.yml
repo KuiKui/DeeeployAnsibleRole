@@ -18,22 +18,22 @@
   shell: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} curl -sS https://getcomposer.org/installer | {{ deeeploy_php_bin }}
   tags:
     - composer
-- name: Initialisation du paramètre 'composer_env'
+- name: Initialisation du paramètre 'deeeploy_composer_env'
   set_fact:
-    composer_env: 'dev'
-  when: composer_env is undefined
+    deeeploy_composer_env: 'dev'
+  when: deeeploy_composer_env is undefined
   tags:
     - composer
 - name: Génération des paramètres 'dev' de Composer
   set_fact:
     composer_options: '--prefer-dist --optimize-autoloader --no-interaction --no-progress --no-scripts'
-  when: composer_env == 'dev'
+  when: deeeploy_composer_env == 'dev'
   tags:
     - composer
 - name: ou génération des paramètres 'prod' de Composer
   set_fact:
     composer_options: '--prefer-dist --no-dev --optimize-autoloader --no-interaction --no-progress --no-scripts'
-  when: composer_env != 'dev'
+  when: deeeploy_composer_env != 'dev'
   tags:
     - composer
 - name: Installation des vendors
