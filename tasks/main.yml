@@ -19,7 +19,7 @@
   tags:
     - composer
 - name: Installation des vendors
-  command: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} {{ deeeploy_php_bin }} composer.phar install --prefer-dist --no-dev --optimize-autoloader --no-interaction --no-progress
+  command: chdir={{ deeeploy_project_path }}/releases/{{ version.stdout }} {{ deeeploy_php_bin }} composer.phar install --prefer-dist --no-dev --optimize-autoloader --no-interaction --no-progress --no-scripts
   tags:
     - composer
 - name: Copie des fichiers de config
