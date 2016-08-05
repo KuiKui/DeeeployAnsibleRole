@@ -44,10 +44,10 @@ The next variables are optional :
 * `deeeploy_branch` : branch to deploy (default `master`),
 * `deeeploy_config_files` : config files to replace with parameters value (default `[]`),
 * `deeeploy_shared_files` : files to shared between releases (default `[]`),
-* `deeeploy_clean_files` : irrelevant files to delete after deployment (default `[".git"]`)
-* `deeeploy_version_filename` : file containing deployed hash (default `VERSION`)
-* `deeeploy_custom_shell_script` : custom shell script to execute
-
+* `deeeploy_clean_files` : irrelevant files to delete after deployment (default `[".git"]`),
+* `deeeploy_version_filename` : file containing deployed hash (default `VERSION`),
+* `deeeploy_custom_shell_script` : custom shell script to execute,
+* `deeeploy_composer_env` : Composer option : `dev` or `prod` (default `dev`).
 
 To use notifications :
 
